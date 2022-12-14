@@ -1,9 +1,8 @@
 // imports 
 const express = require('express');
-const fs = require('fs');
-const api = require('./Develop/routes/route');
 const path = require('path');
-const noteData = require('./Develop/db/db.json');
+const api = require('./routes/routes')
+
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -11,14 +10,20 @@ const PORT = process.env.PORT || 3001;
 // MIDDLEWARE 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+app.use('/api', api);
 
-app.use(express.static('public'));
- 
-
-
+api.use(express.static('public'));
 
 
+// Route Get notes api
+app.get('/api/notes', (req, res) =>
+  res.sendFile(path.join(__dirname, '/public/notes.html'))
+);
 
+//Default route to HOME page, ( should be in the end, otherwise will throw err)
+app.get("*", function(req, res) {
+  res.sendFile(path.join(__dirname, "/public/index.html"));
+});
 
 app.listen(PORT, () =>
   console.log(`Express server listening on port ${PORT}!`)
